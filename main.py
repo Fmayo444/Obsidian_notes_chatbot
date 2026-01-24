@@ -10,11 +10,11 @@ from langchain_classic.chains.combine_documents.stuff import create_stuff_docume
 from langchain_classic.chains.retrieval import create_retrieval_chain
 
 
-# --- PAGE SETUP ---
+# PAGE SETUP
 st.set_page_config(page_title="My Second Brain", layout="wide")
 st.title("🧠 Chat with your Notes")
 
-# --- SIDEBAR: SETTINGS ---
+# SETTINGS
 with st.sidebar:
     st.header("Settings")
     folder_path = st.text_input("Path to your notes folder:", value="./my_notes")
@@ -48,7 +48,7 @@ with st.sidebar:
 
 # --- MAIN CHAT INTERFACE ---
 
-# Initialize the LLM (We use ChatOllama for better chat formatting)
+# Initialize the LLM
 llm = ChatOllama(model="llama3")
 
 # Check if the vector store exists before trying to chat
@@ -58,7 +58,7 @@ if os.path.exists("faiss_index"):
     vector_store = FAISS.load_local("faiss_index", embeddings, allow_dangerous_deserialization=True)
     retriever = vector_store.as_retriever(search_kwargs={"k": 3})
 
-    # --- THE NEW CHAIN IMPLEMENTATION ---
+    # THE NEW CHAIN IMPLEMENTATION
 
     # 1. Define the Prompt
     # BEHAVE CONSTRAINT
@@ -82,7 +82,7 @@ if os.path.exists("faiss_index"):
     # This chain combines the retriever (fetching docs) with the document chain (answering)
     retrieval_chain = create_retrieval_chain(retriever, document_chain)
 
-    # --- CHAT UI ---
+    # CHAT UI
 
     if "messages" not in st.session_state:
         st.session_state.messages = []
@@ -98,7 +98,7 @@ if os.path.exists("faiss_index"):
         st.session_state.messages.append({"role": "user", "content": input_text})
 
         with st.chat_message("assistant"):
-            with st.spinner("Thinking..."):
+            with st.spinner("Analyzing  your notes..."):
                 # Run the chain
                 # Note: We use "input" because that's what we defined in the prompt template above
                 response = retrieval_chain.invoke({"input": input_text})
