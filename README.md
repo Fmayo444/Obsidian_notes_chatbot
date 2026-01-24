@@ -1,6 +1,6 @@
 # 🧠 AI Chatbot for Obsidian Notes or any .md file
 
-I have hundreds of Markdown notes scattered across my laptop from my Obsidian vaul, so I wanted to build a chatbot that has as knowledge base the notes, so that I can make resumes of them.
+I have hundreds of Markdown notes across my laptop from my Obsidian vault, so I wanted to build a chatbot that has as knowledge base the notes, so that I can make resumes of them.
 It uses a local LLM to understand the meaning of my questions, retrieves the relevant specific notes, and generates an answer based only on my data.
 No data leaves my laptop. It runs 100% locally.
 
