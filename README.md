@@ -17,27 +17,34 @@ The system follows a standard RAG architecture that I implemented to handle unst
 ## How to Run It
 
 1. Clone the repo
-
+```python
 git clone https://github.com/Fmayo444/Obsidian_notes_chatbot.git
 cd Obsidian_notes_chatbot
+```
 
 2. Set up the environment Make sure you are using Python 3.11 (important for FAISS and Langchain compatibility!).
 
+```python
 python -m venv venv
 .\venv\Scripts\activate
 pip install -r requirements.txt
+```
 
 3. Install Ollama. You need the Ollama desktop app to run the LLM backend.
 
     Download it from ollama.com.
 
     Pull the model (I use Llama 3):
-
+   
+```python
     ollama run llama3
+```
 
 4. Run the App
 
+```python
 streamlit run main.py
+```
  
 
 
