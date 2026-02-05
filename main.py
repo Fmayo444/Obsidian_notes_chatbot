@@ -8,6 +8,7 @@ from langchain_community.chat_models import ChatOllama
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_classic.chains.combine_documents.stuff import create_stuff_documents_chain
 from langchain_classic.chains.retrieval import create_retrieval_chain
+import sentence_transformers
 
 
 # PAGE SETUP
@@ -26,11 +27,15 @@ with st.sidebar:
                 if not os.path.exists(folder_path):
                     st.error("The specified folder does not exist!")
                 else:
-                    loader = DirectoryLoader(folder_path, glob="**/*.md", loader_cls=TextLoader)
-                    documents = loader.load()
+                    documents = []
+                    md_loader = DirectoryLoader(folder_path, glob="**/*.md", loader_cls=TextLoader)
+                    documents.append(md_loader.load())
+
+                    pdf_loader = DirectoryLoader(folder_path, glob="**/*.pdf", loader_cls=TextLoader)
+                    documents.append(pdf_loader.load())
 
                     if not documents:
-                        st.error("No markdown files found in that folder.")
+                        st.error("No markdown or pdf files found in that folder.")
                     else:
                         # 2. SPLIT TEXT
                         text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
@@ -56,7 +61,8 @@ if os.path.exists("faiss_index"):
     # Load the vector store
     embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
     vector_store = FAISS.load_local("faiss_index", embeddings, allow_dangerous_deserialization=True)
-    retriever = vector_store.as_retriever(search_kwargs={"k": 3})
+    # retriever = vector_store.as_retriever(search_type="similarity_score_threshold", search_kwargs={"k": 4, "score_threshold": 0.3}) # Retriever settings
+    retriever = vector_store.as_retriever(serach_kwargs={"k": 4})
 
     # THE NEW CHAIN IMPLEMENTATION
 
@@ -65,7 +71,7 @@ if os.path.exists("faiss_index"):
     # This tells the LLM exactly how to behave.
     prompt = ChatPromptTemplate.from_template("""
     Answer the following question based ONLY on the provided context. 
-    If the answer is not in the context, say "I don't see that in your notes."
+    If the answer is not in the context, say "I don't see that in your notes. Do you want to try again?"
 
     <context>
     {context}
@@ -100,7 +106,6 @@ if os.path.exists("faiss_index"):
         with st.chat_message("assistant"):
             with st.spinner("Analyzing  your notes..."):
                 # Run the chain
-                # Note: We use "input" because that's what we defined in the prompt template above
                 response = retrieval_chain.invoke({"input": input_text})
 
                 answer = response["answer"]
