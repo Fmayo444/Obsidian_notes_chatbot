@@ -4,7 +4,7 @@ I have hundreds of Markdown notes across my laptop from my Obsidian vault, so I 
 It uses a local LLM to understand the meaning of my questions, retrieves the relevant specific notes, and generates an answer based only on my data.
 No data leaves my laptop. It runs 100% locally.
 
-## How It Works (The RAG Pipeline)
+## How It Works
 
 The system follows a standard RAG architecture that I implemented to handle unstructured Markdown text:
 
